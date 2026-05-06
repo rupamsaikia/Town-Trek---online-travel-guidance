@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi Trip Booking | TownTrek</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    select, input, button {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #0078d7;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    .trip-item {
+      background: #eef4ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .trip-summary {
+      background: #f1f8f1;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #2b4a2f;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TownTrek Trip Booking</h1>
+  </header>
+
+  <div class="container">
+    <h2>Book Multiple Trips</h2>
+    <form id="tripForm">
+      <label for="destination">Select Destination</label>
+      <select id="destination" required>
+        <option value="">-- Choose Destination --</option>
+        <option value="Kamakhya">Kamakhya Temple (2 Days / ₹3499)</option>
+        <option value="Kaziranga">Kaziranga National Park (3 Days / ₹5999)</option>
+        <option value="Majuli">Majuli Island (2 Days / ₹4499)</option>
+        <option value="Haflong">Haflong Hills (3 Days / ₹4999)</option>
+      </select>
+
+      <button type="button" id="addTrip">➕ Add Trip</button>
+
+      <div id="tripList"></div>
+
+      <div class="trip-summary" id="summary">No trips added yet.</div>
+
+      <button type="submit">Book Now</button>
+    </form>
+  </div>
+
+  <script>
+    const trips = {
+      Kamakhya: { days: 2, cost: 3499 },
+      Kaziranga: { days: 3, cost: 5999 },
+      Majuli: { days: 2, cost: 4499 },
+      Haflong: { days: 3, cost: 4999 }
+    };
+
+    const tripList = [];
+    const listDiv = document.getElementById('tripList');
+    const summaryDiv = document.getElementById('summary');
+
+    document.getElementById('addTrip').addEventListener('click', () => {
+      const dest = document.getElementById('destination').value;
+      if (!dest) {
+        alert("Please select a destination first!");
+        return;
+      }
+      const { days, cost } = trips[dest];
+      tripList.push({ dest, days, cost });
+      displayTrips();
+    });
+
+    function displayTrips() {
+      listDiv.innerHTML = "";
+      let totalCost = 0, totalDays = 0;
+
+      tripList.forEach((trip, index) => {
+        totalCost += trip.cost;
+        totalDays += trip.days;
+
+        const div = document.createElement("div");
+        div.classList.add("trip-item");
+        div.innerHTML = `
+          <strong>${trip.dest}</strong><br>
+          Duration: ${trip.days} Days<br>
+          Cost: ₹${trip.cost}
+        `;
+        listDiv.appendChild(div);
+      });
+
+      summaryDiv.textContent = tripList.length
+        ? `Total Trips: ${tripList.length} | Total Days: ${totalDays} | Total Cost: ₹${totalCost}`
+        : "No trips added yet.";
+    }
+      
+    document.getElementById('tripForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (tripList.length === 0) {
+        alert("Please add at least one trip before booking!");
+        return;
+      }
+      let totalCost = tripList.reduce((sum, t) => sum + t.cost, 0);
+      let totalDays = tripList.reduce((sum, t) => sum + t.days, 0);
+      alert(`Booking Confirmed!\n\nTrips: ${tripList.length}\nTotal Days: ${totalDays}\nTotal Cost: ₹${totalCost}`);
+      tripList.length = 0;
+      displayTrips();
+    });
+  </script>
+
+</body>
+</html>
